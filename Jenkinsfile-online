@@ -40,8 +40,10 @@ pipeline {
                 script {
                   scannerHome = tool 'sonar';  // 安装sonar工具，并且获取sonar工具路径
                 }
-                withSonarQubeEnv('sonar') {
-                  sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=ks-devops -Dsonar.sources=.  -Dsonar.login=$SONAR_TOKEN"
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    withSonarQubeEnv('sonar') {
+                      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=ks-devops -Dsonar.sources=.  -Dsonar.login=$SONAR_TOKEN"
+                    }
                 }
                 waitForQualityGate abortPipeline: true
             }
