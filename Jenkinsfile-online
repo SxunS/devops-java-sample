@@ -42,7 +42,7 @@ pipeline {
                 }
                 withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
                     withSonarQubeEnv('sonar') {
-                      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=ks-devops -Dsonar.sources=.  -Dsonar.login=$SONAR_TOKEN"
+                      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=ks-devops -Dsonar.sources=src -Dsonar.login=$SONAR_TOKEN -Dsonar.java.binaries=target/classes -Dsonar.language=java"
                     }
                 }
                 waitForQualityGate abortPipeline: true
