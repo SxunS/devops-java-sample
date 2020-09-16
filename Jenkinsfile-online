@@ -17,6 +17,7 @@ pipeline {
         DOCKERHUB_NAMESPACE = 'sxuns'
         GITHUB_ACCOUNT = 'SxunS'
         APP_NAME = 'devops-java-sample'
+        SONAR_TOKEN = '3e600d714c2a63f73a9fddf78e78b7053a6db155'
     }
 
     stages {
@@ -37,6 +38,7 @@ pipeline {
         stage ('build & push') {
             steps {
                 container ('maven') {
+                    sh 'mvn sonar:sonar -Dsonar.host.url=http://ks-sonarqube-sonarqube.kubesphere-devops-system:9000 -Dsonar.login=$SONAR_TOKEN'
                     sh 'mvn -o -Dmaven.test.skip=true -gs `pwd`/configuration/settings.xml clean package'
                     sh 'docker build -f Dockerfile-online -t $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:SNAPSHOT-$BRANCH_NAME-$BUILD_NUMBER .'
                     withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : "$DOCKER_CREDENTIAL_ID" ,)]) {
